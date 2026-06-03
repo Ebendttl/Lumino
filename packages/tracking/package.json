@@ -1,0 +1,11 @@
+{
+  "name": "@lumino/tracking",
+  "version": "1.0.0",
+  "main": "dist/analytics.js",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.1"
+  }
+}
