@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "ws:start": "node ws-server.js"
+    "gateway": "tsx src/gateway.ts",
+    "ws:start": "tsx src/gateway.ts"
   },
   "dependencies": {
     "@lumino/db": "workspace:*",
