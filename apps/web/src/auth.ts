@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
 import { pool } from '@lumino/db';
-import bcrypt from 'bcrypt';
 
 declare module "next-auth" {
   interface Session {

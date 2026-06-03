@@ -3,6 +3,8 @@ import { auth } from '@/auth';
 import { pool } from '@lumino/db';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const funnelSchema = z.object({
   name: z.string().min(2, 'Funnel name must be at least 2 characters.'),
   steps: z.array(z.string().min(1)).min(2, 'Funnels must have at least 2 steps.').max(5, 'Funnels can have at most 5 steps.'),

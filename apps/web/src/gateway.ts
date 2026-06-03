@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import Redis from 'ioredis';
@@ -9,9 +9,32 @@ import * as cookie from 'cookie';
 import { decode } from 'next-auth/jwt';
 import { pool } from '@lumino/db';
 import { QUEUE_NAME, getRedisConnection } from '@lumino/queue';
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
+
+// Serve the compiled tracking script
+app.get('/analytics.js', (req: Request, res: Response) => {
+  try {
+    const scriptPath = path.resolve(__dirname, '../../../packages/tracking/dist/analytics.js');
+    const fallbackPath = path.resolve(__dirname, '../../packages/tracking/dist/analytics.js');
+    const finalPath = fs.existsSync(scriptPath) ? scriptPath : fallbackPath;
+
+    if (fs.existsSync(finalPath)) {
+      res.setHeader('Content-Type', 'application/javascript');
+      return res.sendFile(finalPath);
+    }
+  } catch (err) {
+    console.error('[Gateway] Error serving analytics.js:', err);
+  }
+  res.status(404).send('analytics.js not compiled or not found');
+});
 
 // Enable trust proxy for obtaining client IP addresses when behind a load balancer (Nginx/Cloudflare)
 app.set('trust proxy', true);
@@ -90,7 +113,7 @@ async function resolveSite(siteId: string): Promise<ResolvedSite | null> {
 }
 
 // Ingestion API Route
-app.post('/collect', async (req, res) => {
+app.post('/collect', async (req: Request, res: Response) => {
   try {
     const parseResult = collectSchema.safeParse(req.body);
     if (!parseResult.success) {
@@ -147,7 +170,7 @@ app.post('/collect', async (req, res) => {
 });
 
 // Privacy Policy Endpoint
-app.get('/privacy', (req, res) => {
+app.get('/privacy', (req: Request, res: Response) => {
   res.json({
     platform: 'Lumino Web Analytics',
     privacy_policy: {
@@ -166,7 +189,9 @@ const server = createServer(app);
 // Standalone WebSocket server
 const wss = new WebSocketServer({ noServer: true });
 
-wss.on('connection', (ws: WebSocket, req, tenantId: string) => {
+import { IncomingMessage } from 'http';
+
+wss.on('connection', (ws: WebSocket, req: IncomingMessage, tenantId: string) => {
   console.log(`[WS] Client connected for tenant: ${tenantId}`);
 
   // Open a dedicated subscriber client for this websocket connection
@@ -222,6 +247,7 @@ server.on('upgrade', async (req, socket, head) => {
     const decoded = await decode({
       token: sessionToken,
       secret,
+      salt: process.env.NODE_ENV === 'production' ? '__Secure-authjs.session-token' : 'authjs.session-token',
     });
 
     const tenantId = decoded?.id || decoded?.sub;

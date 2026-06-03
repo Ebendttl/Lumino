@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { pool } from '@lumino/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }

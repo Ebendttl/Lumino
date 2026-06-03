@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { pool } from '@lumino/db';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { z } from 'zod';
+
+export const dynamic = 'force-dynamic';
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),

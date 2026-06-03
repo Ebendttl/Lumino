@@ -5,7 +5,6 @@ import useSWR from 'swr';
 import { useSite } from '@/components/site-context';
 import DashboardHeader from '@/components/dashboard-header';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
-import { scaleLinear } from 'd3-scale'; // We can write a simple custom color interpolation to keep it light, or use d3-scale if installed.
 // Or we can just write a fast interpolation function ourselves to avoid dependencies! A simple hex color interpolator is very robust.
 import {
   ResponsiveContainer,
@@ -20,7 +19,7 @@ import {
   PieChart,
   Pie,
 } from 'recharts';
-import { Activity, Browser, Eye, Laptop, Globe, Loader2, Link2 } from 'lucide-react';
+import { Activity, Eye, Laptop, Globe, Loader2, Link2 } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 

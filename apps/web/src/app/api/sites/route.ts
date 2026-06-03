@@ -3,6 +3,8 @@ import { auth } from '@/auth';
 import { pool } from '@lumino/db';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const siteSchema = z.object({
   domain: z.string().min(3).regex(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid domain format'),
 });

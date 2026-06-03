@@ -5,8 +5,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "migrate:up": "node-pg-migrate up",
-    "migrate:down": "node-pg-migrate down"
+    "migrate:up": "node-pg-migrate --migrations-dir dist/migrations --ignore-pattern \".*\\.d\\.ts\" up",
+    "migrate:down": "node-pg-migrate --migrations-dir dist/migrations --ignore-pattern \".*\\.d\\.ts\" down"
   },
   "dependencies": {
     "node-pg-migrate": "^6.2.2",

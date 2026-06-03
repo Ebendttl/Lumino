@@ -1,8 +1,8 @@
-import { Reader } from '@maxmind/geoip2-node';
+import { Reader, ReaderModel } from '@maxmind/geoip2-node';
 import * as fs from 'fs';
 import * as path from 'path';
 
-let reader: Reader | null = null;
+let reader: ReaderModel | null = null;
 
 // Paths to search for GeoLite2-City.mmdb
 const possiblePaths = [
