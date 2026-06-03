@@ -4,6 +4,7 @@ export const QUEUE_NAME = 'events';
 
 export interface TrackEventJobPayload {
   siteId: string;
+  tenantId: string;
   page: string;
   referrer: string | null;
   device: 'desktop' | 'mobile' | 'tablet' | 'bot' | 'unknown';
