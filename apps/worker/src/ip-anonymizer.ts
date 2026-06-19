@@ -9,7 +9,7 @@ export function expandIpv6(ip: string): string[] {
     const right = parts[1] ? parts[1].split(':') : [];
     const missingCount = 8 - (left.length + right.length);
     const middle = Array(missingCount).fill('0');
-    absoluteIp = [...left, ...middle, ...right].join(':');
+    return [...left, ...middle, ...right];
   }
   return absoluteIp.split(':');
 }
