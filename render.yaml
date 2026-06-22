@@ -14,7 +14,8 @@ services:
           name: lumino-db
           property: connectionString
       - key: REDIS_URL
-        fromConnectionString:
+        fromService:
+          type: redis
           name: lumino-redis
           property: connectionString
       - key: NEXTAUTH_SECRET
@@ -39,7 +40,8 @@ services:
           name: lumino-db
           property: connectionString
       - key: REDIS_URL
-        fromConnectionString:
+        fromService:
+          type: redis
           name: lumino-redis
           property: connectionString
       - key: NEXTAUTH_SECRET
@@ -66,21 +68,22 @@ services:
           name: lumino-db
           property: connectionString
       - key: REDIS_URL
-        fromConnectionString:
+        fromService:
+          type: redis
           name: lumino-redis
           property: connectionString
       - key: WORKER_CONCURRENCY
         value: 10
 
+  # 4. Redis Service
+  - type: redis
+    name: lumino-redis
+    plan: free
+    ipAllowList: [] # Allows access from all services running inside Render
+
 databases:
-  # 4. PostgreSQL Database
+  # 5. PostgreSQL Database
   - name: lumino-db
     databaseName: lumino
     user: postgres
     plan: free
-
-redis:
-  - name: lumino-redis
-    plan: free
-    ipAllowList: [] # Allows access from all services running inside Render
-
