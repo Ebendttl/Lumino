@@ -33,6 +33,7 @@ export async function runMigrations(): Promise<void> {
     direction: 'up',
     migrationsTable: 'pgmigrations',
     verbose: true,
+    ignorePattern: '.*\\.d\\.ts',
   });
 
   console.log('[Database] Migrations finished successfully.');
