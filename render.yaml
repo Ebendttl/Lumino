@@ -4,7 +4,7 @@ services:
     name: lumino-dashboard
     runtime: node
     plan: free
-    buildCommand: pnpm install && pnpm run build
+    buildCommand: npm install -g pnpm && pnpm install && pnpm run build
     startCommand: pnpm --filter web run start
     envVars:
       - key: NODE_ENV
@@ -18,7 +18,7 @@ services:
     name: lumino-gateway
     runtime: node
     plan: free
-    buildCommand: pnpm install && pnpm run build
+    buildCommand: npm install -g pnpm && pnpm install && pnpm run build
     startCommand: pnpm --filter web run ws:start
     envVars:
       - key: NODE_ENV
@@ -34,7 +34,7 @@ services:
     name: lumino-worker
     runtime: node
     plan: free
-    buildCommand: pnpm install && pnpm run build
+    buildCommand: npm install -g pnpm && pnpm install && pnpm run build
     startCommand: pnpm --filter worker run start
     envVars:
       - key: NODE_ENV
