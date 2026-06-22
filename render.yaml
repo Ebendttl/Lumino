@@ -79,9 +79,8 @@ databases:
     user: postgres
     plan: free
 
-# 5. Redis Instance
-interfaces:
-  - type: redis
-    name: lumino-redis
+redis:
+  - name: lumino-redis
     plan: free
     ipAllowList: [] # Allows access from all services running inside Render
+
