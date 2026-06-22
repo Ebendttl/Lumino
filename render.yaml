@@ -18,12 +18,9 @@ services:
           type: redis
           name: lumino-redis
           property: connectionString
-      - key: NEXTAUTH_SECRET
-        generateValue: true
-      - key: AUTH_SECRET
-        generateValue: true
       - key: NEXTAUTH_URL
         value: https://lumino-dashboard.onrender.com # Replace with your actual Render custom domain when active
+      - fromGroup: lumino-shared-secrets
 
   # 2. Ingestion API and WebSocket Gateway
   - type: web
@@ -44,14 +41,11 @@ services:
           type: redis
           name: lumino-redis
           property: connectionString
-      - key: NEXTAUTH_SECRET
-        syncWithService:
-          name: lumino-dashboard
-          keyword: NEXTAUTH_SECRET
       - key: GATEWAY_PORT
         value: 3001
       - key: PORT
         value: 3001
+      - fromGroup: lumino-shared-secrets
 
   # 3. Background Event Processor (Worker)
   - type: worker
@@ -85,5 +79,12 @@ databases:
   # 5. PostgreSQL Database
   - name: lumino-db
     databaseName: lumino
-    user: postgres
     plan: free
+
+envVarGroups:
+  - name: lumino-shared-secrets
+    envVars:
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: AUTH_SECRET
+        generateValue: true
