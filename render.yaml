@@ -30,7 +30,7 @@ services:
       - fromGroup: lumino-shared-secrets
 
   # 3. Background Event Processor (Worker)
-  - type: worker
+  - type: web
     name: lumino-worker
     runtime: node
     plan: free

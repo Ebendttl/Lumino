@@ -2,6 +2,7 @@ import { pool, runMigrations } from '@lumino/db';
 import { QUEUE_NAME, getRedisConnection, TrackEventJobPayload } from '@lumino/queue';
 import { Worker } from 'bullmq';
 import Redis from 'ioredis';
+import http from 'http';
 import { anonymizeIp } from './ip-anonymizer';
 import { initGeoReader, lookupGeo } from './geo-lookup';
 
@@ -84,9 +85,20 @@ async function main() {
 
   console.log('[Worker] Worker initialized and listening to events queue.');
 
+  // Start dummy health check server for Render Web Service compatibility on Free Tier
+  const PORT = process.env.PORT || 10000;
+  const healthServer = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('OK');
+  });
+  healthServer.listen(PORT, () => {
+    console.log(`[Worker Health Check] Listening on port ${PORT}`);
+  });
+
   // Graceful shutdown
   const shutdown = async () => {
     console.log('[Worker] Shutting down gracefully...');
+    healthServer.close();
     await worker.close();
     await publisher.quit();
     await pool.end();
