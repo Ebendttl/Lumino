@@ -1,0 +1,87 @@
+services:
+  # 1. Next.js Dashboard Web Service
+  - type: web
+    name: lumino-dashboard
+    runtime: node
+    plan: free
+    buildCommand: pnpm install && pnpm run build
+    startCommand: pnpm --filter web run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lumino-db
+          property: connectionString
+      - key: REDIS_URL
+        fromConnectionString:
+          name: lumino-redis
+          property: connectionString
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: NEXTAUTH_URL
+        value: https://lumino-dashboard.onrender.com # Replace with your actual Render custom domain when active
+
+  # 2. Ingestion API and WebSocket Gateway
+  - type: web
+    name: lumino-gateway
+    runtime: node
+    plan: free
+    buildCommand: pnpm install && pnpm run build
+    startCommand: pnpm --filter web run ws:start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lumino-db
+          property: connectionString
+      - key: REDIS_URL
+        fromConnectionString:
+          name: lumino-redis
+          property: connectionString
+      - key: NEXTAUTH_SECRET
+        syncWithService:
+          name: lumino-dashboard
+          keyword: NEXTAUTH_SECRET
+      - key: GATEWAY_PORT
+        value: 3001
+      - key: PORT
+        value: 3001
+
+  # 3. Background Event Processor (Worker)
+  - type: worker
+    name: lumino-worker
+    runtime: node
+    plan: free
+    buildCommand: pnpm install && pnpm run build
+    startCommand: pnpm --filter worker run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lumino-db
+          property: connectionString
+      - key: REDIS_URL
+        fromConnectionString:
+          name: lumino-redis
+          property: connectionString
+      - key: WORKER_CONCURRENCY
+        value: 10
+
+databases:
+  # 4. PostgreSQL Database
+  - name: lumino-db
+    databaseName: lumino
+    user: postgres
+    plan: free
+
+# 5. Redis Instance
+interfaces:
+  - type: redis
+    name: lumino-redis
+    plan: free
+    ipAllowList: [] # Allows access from all services running inside Render
